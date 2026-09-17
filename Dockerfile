@@ -60,6 +60,9 @@ COPY --from=frontend /app/public/build /var/www/html/public/build
 # Install PHP dependencies without dev dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
+# Initialize .env and generate application key
+RUN cp .env.example .env && php artisan key:generate --force
+
 # Copy Apache configuration and entrypoint
 COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
 COPY docker/php.ini /usr/local/etc/php/conf.d/custom.ini
@@ -67,8 +70,9 @@ COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # Ensure executable permissions and file ownership
 RUN chmod +x /usr/local/bin/entrypoint.sh \
-    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/.env \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod 666 /var/www/html/.env
 
 # Expose HTTP port
 EXPOSE 80
