@@ -1,0 +1,13 @@
+.git
+.github
+node_modules
+tests
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+.env
+.env.backup
+.env.production
+storage/*.key
+docker-compose*.yml
+DEPLOYMENT_GUIDE.md
